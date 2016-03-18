@@ -27,6 +27,11 @@ ankimediafolder = "C:\\Documents\\Anki\\1-й пользователь\\collectio
 # Here the main code begins
 ########################################
 
+if os.path.exists('foranki'):
+    key = raw_input("'foranki' folder already exists. Press Enter to clean it or close this window")
+    if not key:
+        shutil.rmtree('foranki')
+
 try:
     os.mkdir('foranki')
 except:
