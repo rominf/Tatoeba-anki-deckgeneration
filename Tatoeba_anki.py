@@ -70,7 +70,7 @@ def proclink(num):
     srcsentence=''
     mainlang = ''
     for i,item in enumerate(srclang):
-        srcsentence = re.findall('mainSentence.+?<div lang="' + item + '" dir="\w{3}" class="text correctnessZero">(.+?)<\/div><\/div><\/div>',html)
+        srcsentence = re.findall('mainSentence.+?<div lang="' + item + '" dir="\w{3}" ng-non-bindable="" class="text correctnessZero">(.+?)<\/div><\/div><\/div>',html)
         if len(srcsentence) > 0:
             srcsentence = srcsentence[0]
             mainlang=audio3letterslangcodes[i]
@@ -113,9 +113,9 @@ def mainproc():
     html = resp.read()
 
     # how many pages there are in this list
-    pagescount = re.findall('/page\:(\d+?)"\stitle="Last page"',html)
+    pagescount = re.findall('/page\:(\d+?)',html)
     if pagescount != []:
-        pagescount = int(pagescount[0])
+        pagescount = max([int(x) for x in pagescount])
     else:
         pagescount = 0 # there is no pagination
     print pagescount
