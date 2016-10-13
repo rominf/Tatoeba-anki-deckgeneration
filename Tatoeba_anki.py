@@ -71,6 +71,7 @@ def proclink(num):
     mainlang = ''
     for i,item in enumerate(srclang):
         srcsentence = re.findall('mainSentence.+?<div lang="' + item + '" dir="\w{3}" ng-non-bindable="" class="text correctnessZero">(.+?)<\/div><\/div><\/div>',html)
+
         if len(srcsentence) > 0:
             srcsentence = srcsentence[0]
             mainlang=audio3letterslangcodes[i]
@@ -90,8 +91,8 @@ def proclink(num):
             urllib.urlretrieve(audiourl,"foranki/" + num + ".mp3")
             curaudio = '[sound:' + num + '.mp3]'
 
-    
-    targetsentence = re.findall('directTranslation".+?<div lang="' + targetlang + '" dir="\w{3}" class="text correctnessZero">(.+?)<\/div>',html)
+    html = html.replace('ng-non-bindable=""','')
+    targetsentence = re.findall('directTranslation".+?<div lang="' + targetlang + '" dir="\w{3}"\s+class="text correctnessZero">(.+?)<\/div>',html)
     if len(targetsentence) > 0:
         targetsentence=targetsentence[0]
     else:
@@ -113,14 +114,15 @@ def mainproc():
     html = resp.read()
 
     # how many pages there are in this list
-    pagescount = re.findall('/page\:(\d+?)',html)
+    pagescount = re.findall('/page\:(\d+?)\D',html)
     if pagescount != []:
         pagescount = max([int(x) for x in pagescount])
     else:
         pagescount = 0 # there is no pagination
-    print pagescount
+
     links = re.findall("<div data-sentence-id=\"(.+?)\"\sclass",html,re.DOTALL)
     sentences = re.findall('<div lang="\w{2,}" dir=\".+\" class=\"text correctnessZero\"\>(.+?)</div>',html)
+
     resp.close()
 
     for i in range(len(links)):
