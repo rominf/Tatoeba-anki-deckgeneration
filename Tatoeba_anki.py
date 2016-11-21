@@ -112,7 +112,6 @@ def mainproc():
         print "Failed to open " + UrlListOfSentences
         sys.exit(1)
     html = resp.read()
-
     # how many pages there are in this list
     pagescount = re.findall('/page\:(\d+?)\D',html)
     if pagescount != []:
@@ -120,8 +119,10 @@ def mainproc():
     else:
         pagescount = 0 # there is no pagination
 
-    links = re.findall("<div data-sentence-id=\"(.+?)\"\sclass",html,re.DOTALL)
-    sentences = re.findall('<div lang="\w{2,}" dir=\".+\" class=\"text correctnessZero\"\>(.+?)</div>',html)
+    print html
+
+    links = re.findall('class="md-icon-button" href="/\w\w\w/sentences/show/(.+?)\"\>',html,re.DOTALL)
+    sentences = re.findall('<div class="text" flex>\s+(.+?)</div>',html)
 
     resp.close()
 
@@ -138,6 +139,7 @@ def mainproc():
             print "Failed to open " + urlloop
             sys.exit(1)
         html = resp.read()
+        # print html
         links = re.findall("<div data-sentence-id=\"(.+?)\"\sclass",html,re.DOTALL)
         sentences = re.findall('<div lang="\w{2,}" dir=\".+\" class=\"text correctnessZero\"\>(.+?)</div>',html)
         resp.close()
