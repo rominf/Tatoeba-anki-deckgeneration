@@ -37,6 +37,7 @@ args = docopt(__doc__)
 
 
 UrlListOfSentences = args['<url>']
+output_dir = UrlListOfSentences.rpartition('/')[-1]
 getAudio = args['--audio']
 getTags = args['--tags']
 getAuthor = args['--author']
@@ -52,18 +53,18 @@ if args['--all']:
     copymediafilestoankifolder = True
 
 
-if os.path.exists('foranki'):
-    key = input("'foranki' folder already exists. Press Enter to clean it or close this window")
+if os.path.exists(output_dir):
+    key = input(f"'{output_dir}' folder already exists. Press Enter to clean it or close this window")
     if not key:
-        shutil.rmtree('foranki')
+        shutil.rmtree(output_dir)
 
 try:
-    os.mkdir('foranki')
+    os.mkdir(output_dir)
 except:
-    logging.error("The script couldn't create a temporary workdir foranki.")
+    logging.error(f"The script couldn't create a temporary workdir {output_dir}.")
     sys.exit(1)
 
-cfile = open("foranki/exampledeck.csv", "w")
+cfile = open(f"{output_dir}/exampledeck.csv", "w")
 
 def procstring(string):
     res = string
@@ -112,7 +113,7 @@ def proclink(num):
         laudio = re.findall("https\:\/\/audio\.tatoeba\.org\/sentences\/(\w{3})\/" + num + ".mp3", resp.text)
         if laudio != []:
             # grab audio
-            urllib.request.urlretrieve(audiourl,"foranki/" + num + ".mp3")
+            urllib.request.urlretrieve(audiourl, f"{output_dir}/" + num + ".mp3")
             curaudio = '[sound:' + num + '.mp3]'
 
     targetsentence = re.findall('directTranslation".+?<div lang="' + targetlang + '" dir="\w{3}"\s+class="text correctnessZero">(.+?)<\/div>', resp.text.replace('ng-non-bindable=""',''))
@@ -168,7 +169,7 @@ def mainproc():
             logging.info(current_percent_completed)
 
     # copy media files to anki media folder
-    for root, dirs, files in os.walk('foranki'):
+    for root, dirs, files in os.walk(output_dir):
         for f in files:
             filename = os.path.join(root, f)
             if filename.endswith('.mp3'):
